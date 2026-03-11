@@ -4,27 +4,30 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Half Marathon Trainer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --primary: #e85d26;
-      --primary-dark: #c44a18;
-      --secondary: #1a1a2e;
-      --accent: #f5a623;
-      --bg: #f7f5f2;
+      --primary: #ff6b6b;
+      --primary-dark: #e85555;
+      --coach-color: #a78bfa;
+      --coach-dark: #7c3aed;
+      --runner-color: #34d399;
+      --runner-dark: #059669;
+      --bg: #fff8f5;
       --card: #ffffff;
-      --text: #1a1a2e;
-      --text-muted: #6b7280;
-      --border: #e5e7eb;
-      --coach-color: #7c3aed;
-      --runner-color: #059669;
-      --radius: 12px;
-      --shadow: 0 2px 12px rgba(0,0,0,0.08);
+      --text: #2d2438;
+      --text-muted: #9ca3af;
+      --border: #f0e8ff;
+      --radius: 20px;
+      --radius-sm: 12px;
+      --shadow: 0 4px 20px rgba(167,139,250,0.12);
+      --shadow-hover: 0 8px 32px rgba(167,139,250,0.22);
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
       background: var(--bg);
       color: var(--text);
       min-height: 100vh;
@@ -32,47 +35,55 @@
 
     /* ─── NAV ─────────────────────────────────────────────── */
     nav {
-      background: var(--secondary);
-      color: white;
+      background: white;
       padding: 0 24px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 60px;
+      height: 64px;
       position: sticky;
       top: 0;
       z-index: 100;
+      box-shadow: 0 2px 16px rgba(167,139,250,0.1);
     }
     nav .logo {
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-weight: 700;
-      font-size: 1.1rem;
-      letter-spacing: -0.3px;
+      gap: 8px;
+      font-weight: 900;
+      font-size: 1.15rem;
+      color: var(--text);
     }
-    nav .logo svg { width: 28px; height: 28px; }
+    nav .logo .logo-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+    }
     nav .mode-badge {
       font-size: 0.75rem;
-      font-weight: 600;
-      padding: 4px 12px;
+      font-weight: 800;
+      padding: 6px 16px;
       border-radius: 20px;
       letter-spacing: 0.5px;
       text-transform: uppercase;
     }
-    nav .mode-badge.coach { background: var(--coach-color); }
-    nav .mode-badge.runner { background: var(--runner-color); }
+    nav .mode-badge.coach { background: #ede9fe; color: var(--coach-dark); }
+    nav .mode-badge.runner { background: #d1fae5; color: var(--runner-dark); }
     nav .switch-btn {
-      background: rgba(255,255,255,0.15);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 6px 14px;
+      background: var(--bg);
+      color: var(--text-muted);
+      border: 2px solid #f0e8ff;
+      border-radius: 12px;
+      padding: 7px 16px;
       cursor: pointer;
-      font-size: 0.85rem;
-      transition: background 0.2s;
+      font-size: 0.82rem;
+      font-weight: 700;
+      font-family: inherit;
+      transition: all 0.2s;
     }
-    nav .switch-btn:hover { background: rgba(255,255,255,0.25); }
+    nav .switch-btn:hover { border-color: var(--coach-color); color: var(--text); }
 
     /* ─── LANDING ─────────────────────────────────────────── */
     #landing {
@@ -82,62 +93,104 @@
       align-items: center;
       justify-content: center;
       padding: 24px;
-      background: linear-gradient(135deg, var(--secondary) 0%, #2d2d5e 100%);
+      background: linear-gradient(160deg, #667eea 0%, #f093fb 50%, #ff6b6b 100%);
+      position: relative;
+      overflow: hidden;
     }
-    #landing .hero-icon { font-size: 4rem; margin-bottom: 16px; }
+    #landing::before {
+      content: '';
+      position: absolute;
+      width: 500px; height: 500px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 50%;
+      top: -150px; right: -150px;
+    }
+    #landing::after {
+      content: '';
+      position: absolute;
+      width: 300px; height: 300px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 50%;
+      bottom: -80px; left: -80px;
+    }
+    #landing .hero-badge {
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(8px);
+      color: white;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 6px 18px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+    #landing .hero-icon { font-size: 5rem; margin-bottom: 12px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.15)); }
     #landing h1 {
       color: white;
-      font-size: 2.2rem;
-      font-weight: 800;
+      font-size: 2.6rem;
+      font-weight: 900;
       text-align: center;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       letter-spacing: -1px;
+      text-shadow: 0 2px 16px rgba(0,0,0,0.15);
     }
-    #landing p {
-      color: rgba(255,255,255,0.65);
+    #landing > p {
+      color: rgba(255,255,255,0.8);
       margin-bottom: 48px;
       font-size: 1.05rem;
+      font-weight: 600;
     }
     .role-cards {
       display: flex;
       gap: 20px;
       flex-wrap: wrap;
       justify-content: center;
-      max-width: 560px;
+      max-width: 580px;
       width: 100%;
+      position: relative;
+      z-index: 1;
     }
     .role-card {
       flex: 1;
-      min-width: 200px;
+      min-width: 220px;
       background: white;
-      border-radius: var(--radius);
-      padding: 32px 24px;
+      border-radius: 24px;
+      padding: 36px 28px 28px;
       text-align: center;
       cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-      border: 3px solid transparent;
+      transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
     }
-    .role-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.2); }
-    .role-card.coach-card:hover { border-color: var(--coach-color); }
-    .role-card.runner-card:hover { border-color: var(--runner-color); }
-    .role-card .icon { font-size: 2.8rem; margin-bottom: 12px; }
-    .role-card h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; }
-    .role-card p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
-    .role-card .role-btn {
-      margin-top: 20px;
+    .role-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 20px 48px rgba(0,0,0,0.18); }
+    .role-card .icon-wrap {
+      width: 72px; height: 72px;
+      border-radius: 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.2rem;
+      margin: 0 auto 16px;
+    }
+    .coach-card .icon-wrap { background: linear-gradient(135deg, #ede9fe, #ddd6fe); }
+    .runner-card .icon-wrap { background: linear-gradient(135deg, #d1fae5, #a7f3d0); }
+    .role-card h2 { font-size: 1.3rem; font-weight: 900; margin-bottom: 8px; color: var(--text); }
+    .role-card p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 24px; font-weight: 600; }
+    .role-btn {
       display: inline-block;
-      padding: 10px 24px;
-      border-radius: 8px;
-      font-weight: 600;
+      padding: 12px 28px;
+      border-radius: 14px;
+      font-weight: 800;
       font-size: 0.9rem;
       color: white;
+      transition: opacity 0.2s;
     }
-    .coach-card .role-btn { background: var(--coach-color); }
-    .runner-card .role-btn { background: var(--runner-color); }
+    .role-btn:hover { opacity: 0.9; }
+    .coach-card .role-btn { background: linear-gradient(135deg, #a78bfa, #7c3aed); }
+    .runner-card .role-btn { background: linear-gradient(135deg, #34d399, #059669); }
 
     /* ─── APP SHELL ───────────────────────────────────────── */
     #app { display: none; }
-    .container { max-width: 800px; margin: 0 auto; padding: 24px 16px; }
+    .container { max-width: 780px; margin: 0 auto; padding: 28px 16px; }
 
     /* ─── CARDS ───────────────────────────────────────────── */
     .card {
@@ -146,15 +199,25 @@
       padding: 24px;
       margin-bottom: 20px;
       box-shadow: var(--shadow);
+      border: 1px solid rgba(167,139,250,0.08);
     }
     .card-header {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       margin-bottom: 20px;
     }
-    .card-header h2 { font-size: 1.1rem; font-weight: 700; }
-    .card-header .icon { font-size: 1.3rem; }
+    .card-header .icon-circle {
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .card-header.coach-header .icon-circle { background: #ede9fe; }
+    .card-header.runner-header .icon-circle { background: #d1fae5; }
+    .card-header.neutral .icon-circle { background: #fff3e0; }
+    .card-header h2 { font-size: 1.1rem; font-weight: 800; }
 
     /* ─── FORM ────────────────────────────────────────────── */
     .form-grid {
@@ -164,117 +227,132 @@
     }
     .form-group { display: flex; flex-direction: column; gap: 6px; }
     .form-group.full-width { grid-column: 1 / -1; }
-    label { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    label { font-size: 0.75rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; }
     input, select, textarea {
-      border: 2px solid var(--border);
-      border-radius: 8px;
-      padding: 10px 12px;
+      border: 2px solid #f0e8ff;
+      border-radius: 12px;
+      padding: 11px 14px;
       font-size: 0.95rem;
-      font-family: inherit;
+      font-family: 'Nunito', inherit;
+      font-weight: 600;
       color: var(--text);
-      background: white;
-      transition: border-color 0.2s;
+      background: #fdfaff;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
     input:focus, select:focus, textarea:focus {
       outline: none;
       border-color: var(--coach-color);
+      box-shadow: 0 0 0 4px rgba(167,139,250,0.15);
+      background: white;
     }
-    textarea { resize: vertical; min-height: 80px; }
+    textarea { resize: vertical; min-height: 90px; }
 
     .btn {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      padding: 12px 24px;
+      padding: 13px 28px;
       border: none;
-      border-radius: 8px;
+      border-radius: 14px;
       font-size: 0.95rem;
-      font-weight: 600;
+      font-weight: 800;
+      font-family: 'Nunito', inherit;
       cursor: pointer;
-      transition: opacity 0.2s, transform 0.1s;
+      transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
     }
-    .btn:hover { opacity: 0.9; }
-    .btn:active { transform: scale(0.98); }
-    .btn-coach { background: var(--coach-color); color: white; }
-    .btn-runner { background: var(--runner-color); color: white; }
-    .btn-danger { background: #ef4444; color: white; padding: 6px 12px; font-size: 0.8rem; }
-    .btn-sm { padding: 6px 14px; font-size: 0.82rem; }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+    .btn:active { transform: scale(0.97); }
+    .btn-coach { background: linear-gradient(135deg, #a78bfa, #7c3aed); color: white; }
+    .btn-runner { background: linear-gradient(135deg, #34d399, #059669); color: white; }
+    .btn-danger { background: #fee2e2; color: #dc2626; padding: 7px 14px; font-size: 0.8rem; border-radius: 10px; }
+    .btn-danger:hover { background: #fecaca; box-shadow: none; }
+    .btn-sm { padding: 7px 16px; font-size: 0.82rem; }
     .btn-block { width: 100%; justify-content: center; }
 
     /* ─── TODAY'S WORKOUT ─────────────────────────────────── */
     .today-workout {
-      border-left: 4px solid var(--primary);
-      padding-left: 16px;
+      background: linear-gradient(135deg, #fff8f5, #fdf4ff);
+      border-radius: 16px;
+      padding: 20px;
+      border-left: 5px solid var(--primary);
     }
     .today-workout .workout-type {
-      font-size: 0.75rem;
-      font-weight: 700;
+      font-size: 0.72rem;
+      font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
       color: var(--primary);
       margin-bottom: 6px;
     }
-    .today-workout h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
+    .today-workout h3 { font-size: 1.4rem; font-weight: 900; margin-bottom: 12px; }
     .today-workout .meta {
       display: flex;
-      gap: 16px;
-      margin-bottom: 12px;
+      gap: 10px;
+      margin-bottom: 14px;
       flex-wrap: wrap;
     }
     .today-workout .meta span {
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       color: var(--text-muted);
+      font-weight: 700;
+      background: white;
+      padding: 5px 12px;
+      border-radius: 20px;
+      border: 1.5px solid #f0e8ff;
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 5px;
     }
     .today-workout .notes {
-      background: var(--bg);
-      border-radius: 8px;
-      padding: 12px;
+      background: white;
+      border-radius: 12px;
+      padding: 14px;
       font-size: 0.9rem;
       line-height: 1.6;
       color: var(--text);
+      font-weight: 600;
+      border: 1.5px solid #f0e8ff;
     }
 
     /* ─── WORKOUT LIST ────────────────────────────────────── */
-    .workout-list { display: flex; flex-direction: column; gap: 12px; }
+    .workout-list { display: flex; flex-direction: column; gap: 10px; }
     .workout-item {
       display: flex;
       align-items: flex-start;
       gap: 14px;
-      padding: 14px;
-      background: var(--bg);
-      border-radius: 10px;
-      transition: background 0.2s;
+      padding: 14px 16px;
+      background: #fdfaff;
+      border-radius: 16px;
+      border: 1.5px solid #f0e8ff;
+      transition: all 0.2s;
     }
-    .workout-item:hover { background: #eeecea; }
+    .workout-item:hover { background: #f5f0ff; border-color: #ddd6fe; transform: translateX(3px); }
     .workout-date-box {
       min-width: 52px;
       text-align: center;
-      background: var(--secondary);
+      background: linear-gradient(135deg, #667eea, #764ba2);
       color: white;
-      border-radius: 8px;
-      padding: 6px 4px;
+      border-radius: 14px;
+      padding: 8px 4px;
     }
-    .workout-date-box .day-num { font-size: 1.3rem; font-weight: 800; line-height: 1; }
-    .workout-date-box .day-mon { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.75; }
+    .workout-date-box .day-num { font-size: 1.4rem; font-weight: 900; line-height: 1; }
+    .workout-date-box .day-mon { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.8; font-weight: 700; }
     .workout-info { flex: 1; min-width: 0; }
     .workout-info .type-badge {
       display: inline-block;
-      font-size: 0.7rem;
-      font-weight: 700;
+      font-size: 0.68rem;
+      font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.5px;
-      padding: 2px 8px;
-      border-radius: 4px;
-      margin-bottom: 4px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 5px;
     }
-    .workout-info h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 2px; }
-    .workout-info .desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .workout-info .meta-sm { display: flex; gap: 10px; margin-top: 4px; }
-    .workout-info .meta-sm span { font-size: 0.78rem; color: var(--text-muted); }
-    .workout-actions { display: flex; gap: 6px; align-items: flex-start; }
+    .workout-info h4 { font-size: 0.95rem; font-weight: 800; margin-bottom: 2px; }
+    .workout-info .desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+    .workout-info .meta-sm { display: flex; gap: 8px; margin-top: 5px; flex-wrap: wrap; }
+    .workout-info .meta-sm span { font-size: 0.75rem; color: var(--text-muted); font-weight: 700; background: white; padding: 2px 8px; border-radius: 20px; border: 1px solid #f0e8ff; }
+    .workout-actions { display: flex; gap: 6px; align-items: flex-start; padding-top: 2px; }
 
     /* ─── TYPE COLORS ─────────────────────────────────────── */
     .type-easy { background: #d1fae5; color: #065f46; }
@@ -288,63 +366,82 @@
     /* ─── EMPTY STATE ─────────────────────────────────────── */
     .empty-state {
       text-align: center;
-      padding: 40px 20px;
+      padding: 44px 20px;
       color: var(--text-muted);
     }
-    .empty-state .empty-icon { font-size: 3rem; margin-bottom: 12px; }
-    .empty-state h3 { font-size: 1rem; font-weight: 600; margin-bottom: 6px; color: var(--text); }
-    .empty-state p { font-size: 0.85rem; }
+    .empty-state .empty-icon { font-size: 3.5rem; margin-bottom: 14px; }
+    .empty-state h3 { font-size: 1rem; font-weight: 800; margin-bottom: 6px; color: var(--text); }
+    .empty-state p { font-size: 0.85rem; font-weight: 600; }
 
     /* ─── REST DAY ────────────────────────────────────────── */
     .rest-day-card {
       text-align: center;
-      padding: 32px;
+      padding: 36px;
       background: linear-gradient(135deg, #f0fdf4, #dcfce7);
       border-radius: var(--radius);
       border: 2px dashed #86efac;
     }
-    .rest-day-card .icon { font-size: 3rem; margin-bottom: 8px; }
-    .rest-day-card h3 { font-size: 1.2rem; font-weight: 700; color: #15803d; }
-    .rest-day-card p { color: #166534; font-size: 0.9rem; margin-top: 4px; }
+    .rest-day-card .icon { font-size: 3.5rem; margin-bottom: 10px; }
+    .rest-day-card h3 { font-size: 1.3rem; font-weight: 900; color: #15803d; }
+    .rest-day-card p { color: #166534; font-size: 0.9rem; margin-top: 6px; font-weight: 600; }
 
     /* ─── STATS ───────────────────────────────────────────── */
     .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
-    .stat-box { background: var(--card); border-radius: var(--radius); padding: 16px; text-align: center; box-shadow: var(--shadow); }
-    .stat-box .val { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
-    .stat-box .lbl { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-top: 2px; }
+    .stat-box {
+      background: var(--card);
+      border-radius: var(--radius-sm);
+      padding: 18px 12px;
+      text-align: center;
+      box-shadow: var(--shadow);
+      border: 1.5px solid #f0e8ff;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .stat-box:nth-child(1)::before { background: linear-gradient(90deg, #a78bfa, #7c3aed); }
+    .stat-box:nth-child(2)::before { background: linear-gradient(90deg, #ff6b6b, #ff8e53); }
+    .stat-box:nth-child(3)::before { background: linear-gradient(90deg, #34d399, #059669); }
+    .stat-box .val { font-size: 1.7rem; font-weight: 900; color: var(--text); }
+    .stat-box .lbl { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin-top: 2px; font-weight: 800; }
 
     /* ─── TOAST ───────────────────────────────────────────── */
     #toast {
       position: fixed;
-      bottom: 24px;
+      bottom: 28px;
       left: 50%;
       transform: translateX(-50%) translateY(80px);
-      background: #1a1a2e;
+      background: linear-gradient(135deg, #2d2438, #3d3050);
       color: white;
-      padding: 12px 24px;
-      border-radius: 10px;
+      padding: 13px 28px;
+      border-radius: 16px;
       font-size: 0.9rem;
-      font-weight: 500;
-      transition: transform 0.3s ease;
+      font-weight: 700;
+      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
       z-index: 999;
       white-space: nowrap;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
     }
     #toast.show { transform: translateX(-50%) translateY(0); }
 
     /* ─── SECTION TITLE ───────────────────────────────────── */
     .section-title {
-      font-size: 0.75rem;
-      font-weight: 700;
+      font-size: 0.72rem;
+      font-weight: 800;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 1.2px;
       color: var(--text-muted);
       margin-bottom: 12px;
     }
 
     /* ─── TABS (runner) ───────────────────────────────────── */
-    .tabs { display: flex; gap: 4px; margin-bottom: 20px; background: var(--border); padding: 4px; border-radius: 10px; }
-    .tab { flex: 1; padding: 8px; text-align: center; border-radius: 7px; cursor: pointer; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); transition: all 0.2s; border: none; background: transparent; }
-    .tab.active { background: white; color: var(--text); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+    .tabs { display: flex; gap: 6px; margin-bottom: 20px; background: white; padding: 5px; border-radius: 16px; box-shadow: var(--shadow); border: 1.5px solid #f0e8ff; }
+    .tab { flex: 1; padding: 10px; text-align: center; border-radius: 12px; cursor: pointer; font-size: 0.88rem; font-weight: 800; color: var(--text-muted); transition: all 0.2s; border: none; background: transparent; font-family: 'Nunito', inherit; }
+    .tab.active { background: linear-gradient(135deg, #d1fae5, #a7f3d0); color: var(--runner-dark); box-shadow: 0 2px 8px rgba(52,211,153,0.2); }
 
     @media (max-width: 500px) {
       .form-grid { grid-template-columns: 1fr; }
@@ -362,21 +459,22 @@
      LANDING
 ═══════════════════════════════════════════════════════════ -->
 <div id="landing">
-  <div class="hero-icon">🏃</div>
-  <h1>Half Marathon Trainer</h1>
-  <p>Train smart. Run strong. Cross the finish line.</p>
+  <div class="hero-badge">🏅 Half Marathon Training</div>
+  <div class="hero-icon">🏃‍♀️</div>
+  <h1>Train. Run. Conquer.</h1>
+  <p>Your coach & runner, in perfect sync ✨</p>
   <div class="role-cards">
     <div class="role-card coach-card" onclick="enterView('coach')">
-      <div class="icon">📋</div>
+      <div class="icon-wrap">📋</div>
       <h2>Coach</h2>
-      <p>Create and manage workouts for your runners</p>
-      <div class="role-btn">Coach View</div>
+      <p>Plan workouts and keep your runner on track</p>
+      <div class="role-btn">Coach View →</div>
     </div>
     <div class="role-card runner-card" onclick="enterView('runner')">
-      <div class="icon">👟</div>
+      <div class="icon-wrap">👟</div>
       <h2>Runner</h2>
-      <p>View today's workout and your training schedule</p>
-      <div class="role-btn">Runner View</div>
+      <p>See today's workout and your full schedule</p>
+      <div class="role-btn">Runner View →</div>
     </div>
   </div>
 </div>
@@ -387,11 +485,7 @@
 <div id="app">
   <nav>
     <div class="logo">
-      <svg viewBox="0 0 28 28" fill="none">
-        <circle cx="14" cy="14" r="14" fill="#e85d26" opacity="0.2"/>
-        <path d="M8 20 L14 8 L20 20" stroke="#e85d26" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <circle cx="14" cy="6" r="2.5" fill="#e85d26"/>
-      </svg>
+      <div class="logo-icon">🏃</div>
       Half Marathon Trainer
     </div>
     <span class="mode-badge" id="modeBadge"></span>
@@ -468,7 +562,7 @@ function renderCoach() {
     </div>
 
     <div class="card">
-      <div class="card-header"><span class="icon">➕</span><h2>Add Workout</h2></div>
+      <div class="card-header coach-header"><div class="icon-circle">➕</div><h2>Add Workout</h2></div>
       <form onsubmit="addWorkout(event)">
         <div class="form-grid">
           <div class="form-group">
@@ -516,7 +610,7 @@ function renderCoach() {
     </div>
 
     <div class="card">
-      <div class="card-header"><span class="icon">📅</span><h2>Upcoming Workouts</h2></div>
+      <div class="card-header coach-header"><div class="icon-circle">📅</div><h2>Upcoming Workouts</h2></div>
       ${upcoming.length === 0
         ? `<div class="empty-state"><div class="empty-icon">📭</div><h3>No upcoming workouts</h3><p>Use the form above to schedule your first workout.</p></div>`
         : `<div class="workout-list">${upcoming.map(workoutItemHTML).join('')}</div>`}
@@ -524,7 +618,7 @@ function renderCoach() {
 
     ${past.length > 0 ? `
     <div class="card">
-      <div class="card-header"><span class="icon">🗓</span><h2>Past Workouts</h2></div>
+      <div class="card-header neutral"><div class="icon-circle">🗓</div><h2>Past Workouts</h2></div>
       <div class="workout-list">${past.map(workoutItemHTML).join('')}</div>
     </div>` : ''}
   `;
