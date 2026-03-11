@@ -443,6 +443,95 @@
     .tab { flex: 1; padding: 10px; text-align: center; border-radius: 12px; cursor: pointer; font-size: 0.88rem; font-weight: 800; color: var(--text-muted); transition: all 0.2s; border: none; background: transparent; font-family: 'Nunito', inherit; }
     .tab.active { background: linear-gradient(135deg, #d1fae5, #a7f3d0); color: var(--runner-dark); box-shadow: 0 2px 8px rgba(52,211,153,0.2); }
 
+    /* ─── WEEK VIEW ────────────────────────────────────────── */
+    .week-nav {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .week-nav-title { font-weight: 900; font-size: 0.95rem; color: var(--text); }
+    .week-nav-btn {
+      background: white; border: 1.5px solid #f0e8ff; border-radius: 12px;
+      padding: 8px 16px; cursor: pointer; font-weight: 800; font-family: 'Nunito', inherit;
+      font-size: 0.82rem; color: var(--text-muted); transition: all 0.2s;
+    }
+    .week-nav-btn:hover { border-color: var(--runner-color); color: var(--runner-dark); }
+
+    .week-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .week-day {
+      background: white; border-radius: 18px; border: 1.5px solid #f0e8ff;
+      overflow: hidden; transition: border-color 0.2s;
+    }
+    .week-day.is-today { border-color: var(--runner-color); box-shadow: 0 0 0 3px rgba(52,211,153,0.12); }
+
+    .week-day-row {
+      display: flex; align-items: center; gap: 14px; padding: 14px 16px;
+    }
+    .week-day-label {
+      display: flex; flex-direction: column; align-items: center;
+      min-width: 44px; flex-shrink: 0;
+    }
+    .week-day-label .d-name {
+      font-size: 0.65rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.8px; color: var(--text-muted);
+    }
+    .week-day-label .d-num {
+      width: 34px; height: 34px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; font-weight: 900; color: var(--text);
+      margin-top: 2px;
+    }
+    .week-day.is-today .d-num { background: var(--runner-color); color: white; }
+
+    .week-day-content { flex: 1; min-width: 0; }
+    .week-rest-label {
+      font-size: 0.82rem; font-weight: 700; color: var(--text-muted);
+      display: flex; align-items: center; gap: 6px;
+    }
+
+    .week-workout-pill {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 10px; background: #fdfaff; border-radius: 12px;
+      padding: 10px 12px; border: 1.5px solid #f0e8ff;
+      margin-bottom: 6px;
+    }
+    .week-workout-pill:last-of-type { margin-bottom: 0; }
+    .week-pill-left { display: flex; flex-direction: column; min-width: 0; }
+    .week-pill-badge {
+      font-size: 0.62rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.5px; padding: 2px 7px; border-radius: 6px;
+      margin-bottom: 3px; display: inline-block; align-self: flex-start;
+    }
+    .week-pill-title { font-size: 0.85rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .week-pill-meta { font-size: 0.73rem; color: var(--text-muted); font-weight: 700; margin-top: 2px; }
+    .week-move-btn {
+      background: #ede9fe; border: none; border-radius: 8px;
+      padding: 5px 10px; cursor: pointer; font-size: 0.72rem;
+      font-weight: 800; color: var(--coach-dark); font-family: 'Nunito', inherit;
+      white-space: nowrap; transition: background 0.2s; flex-shrink: 0;
+    }
+    .week-move-btn:hover { background: #ddd6fe; }
+
+    .move-picker {
+      padding: 10px 16px 14px; border-top: 1.5px solid #f0e8ff;
+      background: #fdfaff;
+    }
+    .move-picker-label { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-muted); margin-bottom: 8px; }
+    .move-picker-days { display: flex; flex-wrap: wrap; gap: 6px; }
+    .move-day-btn {
+      border: 1.5px solid #f0e8ff; background: white; border-radius: 10px;
+      padding: 6px 12px; cursor: pointer; font-size: 0.78rem; font-weight: 800;
+      color: var(--text-muted); font-family: 'Nunito', inherit; transition: all 0.15s;
+    }
+    .move-day-btn:hover { border-color: var(--runner-color); color: var(--runner-dark); background: #f0fdf4; }
+    .move-day-btn.is-current { background: #d1fae5; border-color: var(--runner-color); color: var(--runner-dark); }
+    .move-cancel-btn {
+      border: 1.5px solid #fee2e2; background: white; border-radius: 10px;
+      padding: 6px 12px; cursor: pointer; font-size: 0.78rem; font-weight: 800;
+      color: #dc2626; font-family: 'Nunito', inherit; transition: all 0.15s;
+    }
+    .move-cancel-btn:hover { background: #fee2e2; }
+
     @media (max-width: 500px) {
       .form-grid { grid-template-columns: 1fr; }
       .stats-row { grid-template-columns: repeat(3, 1fr); }
@@ -516,6 +605,8 @@ const workoutsRef = db.ref('workouts');
 let currentView = null;
 let activeTab = 'today';
 let workouts = [];
+let weekOffset = 0;
+let movingWorkoutId = null;
 
 // Real-time listener — re-renders whenever Firebase data changes
 workoutsRef.on('value', snapshot => {
@@ -628,9 +719,10 @@ function renderCoach() {
 function renderRunner(tab = 'today') {
   const todayW = workouts.find(w => w.date === today());
   const upcoming = workouts.filter(w => w.date > today()).sort((a,b)=>a.date.localeCompare(b.date));
+
   const todayHTML = todayW
     ? todayW.type === 'rest'
-        ? `<div class="rest-day-card"><div class="icon">😴</div><h3>Rest Day</h3><p>${todayW.notes || "Take it easy today — recovery is training too!"}</p></div>`
+        ? `<div class="rest-day-card"><div class="icon">😴</div><h3>Rest Day</h3><p>${esc(todayW.notes) || "Take it easy today — recovery is training too!"}</p></div>`
         : `<div class="today-workout">
             <div class="workout-type">${typeLabel(todayW.type)}</div>
             <h3>${esc(todayW.title)}</h3>
@@ -650,7 +742,8 @@ function renderRunner(tab = 'today') {
   return `
     <div class="tabs">
       <button class="tab ${tab==='today'?'active':''}" onclick="switchTab('today')">Today</button>
-      <button class="tab ${tab==='schedule'?'active':''}" onclick="switchTab('schedule')">Schedule</button>
+      <button class="tab ${tab==='week'?'active':''}" onclick="switchTab('week')">My Week</button>
+      <button class="tab ${tab==='schedule'?'active':''}" onclick="switchTab('schedule')">All</button>
     </div>
 
     <div id="tab-today" style="display:${tab==='today'?'block':'none'}">
@@ -658,11 +751,136 @@ function renderRunner(tab = 'today') {
       <div class="card" style="padding: 28px;">${todayHTML}</div>
     </div>
 
+    <div id="tab-week" style="display:${tab==='week'?'block':'none'}">
+      ${renderWeekView()}
+    </div>
+
     <div id="tab-schedule" style="display:${tab==='schedule'?'block':'none'}">
-      <p class="section-title">Upcoming Training</p>
+      <p class="section-title">All Upcoming Workouts</p>
       <div class="card">${schedHTML}</div>
     </div>
   `;
+}
+
+// ─── WEEK VIEW ───────────────────────────────────────────────
+function renderWeekView() {
+  const weekStart = getWeekStart();
+  const days = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(weekStart);
+    d.setDate(weekStart.getDate() + i);
+    return d;
+  });
+
+  const weekLabel = `${days[0].toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} – ${days[6].toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`;
+
+  const daysHTML = days.map(d => {
+    const dateStr = fmtDate(d);
+    const isToday = dateStr === today();
+    const dayWorkouts = workouts.filter(w => w.date === dateStr);
+    const dName = d.toLocaleDateString('en-US', { weekday: 'short' });
+    const dNum = d.getDate();
+
+    const workoutsHTML = dayWorkouts.length === 0
+      ? `<div class="week-rest-label">💤 Rest</div>`
+      : dayWorkouts.map(w => {
+          const isMoving = movingWorkoutId === w.id;
+          const meta = [w.distance ? `${w.distance}mi` : '', w.duration ? `${w.duration}min` : '', w.pace ? `${esc(w.pace)}/mi` : ''].filter(Boolean).join(' · ');
+          return `
+            <div class="week-workout-pill">
+              <div class="week-pill-left">
+                <span class="week-pill-badge type-${w.type}">${typeLabel(w.type)}</span>
+                <span class="week-pill-title">${esc(w.title)}</span>
+                ${meta ? `<span class="week-pill-meta">${meta}</span>` : ''}
+              </div>
+              <button class="week-move-btn" onclick="startMove('${w.id}')">✏️ Move</button>
+            </div>
+            ${isMoving ? movePicker(w.id, w.date, days) : ''}
+          `;
+        }).join('');
+
+    return `
+      <div class="week-day ${isToday ? 'is-today' : ''}">
+        <div class="week-day-row">
+          <div class="week-day-label">
+            <span class="d-name">${dName}</span>
+            <span class="d-num">${dNum}</span>
+          </div>
+          <div class="week-day-content">${workoutsHTML}</div>
+        </div>
+        ${dayWorkouts.some(w => movingWorkoutId === w.id) ? '' : ''}
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div class="week-nav">
+      <button class="week-nav-btn" onclick="changeWeek(-1)">← Prev</button>
+      <span class="week-nav-title">${weekLabel}</span>
+      <button class="week-nav-btn" onclick="changeWeek(1)">Next →</button>
+    </div>
+    <div class="week-list">${daysHTML}</div>
+    <p style="margin-top:14px; font-size:0.78rem; color:var(--text-muted); text-align:center; font-weight:600;">
+      Tap ✏️ Move on any workout to reschedule it
+    </p>
+  `;
+}
+
+function movePicker(workoutId, currentDate, days) {
+  const btns = days.map(d => {
+    const dateStr = fmtDate(d);
+    const label = d.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+    return `<button class="move-day-btn ${currentDate === dateStr ? 'is-current' : ''}" onclick="confirmMove('${workoutId}','${dateStr}')">${label}</button>`;
+  }).join('');
+  return `
+    <div class="move-picker">
+      <div class="move-picker-label">Move to…</div>
+      <div class="move-picker-days">
+        ${btns}
+        <button class="move-cancel-btn" onclick="cancelMove()">✕ Cancel</button>
+      </div>
+    </div>
+  `;
+}
+
+function getWeekStart() {
+  const d = new Date();
+  const dow = d.getDay(); // 0=Sun
+  const diff = dow === 0 ? -6 : 1 - dow; // shift to Monday
+  d.setDate(d.getDate() + diff + weekOffset * 7);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function fmtDate(d) {
+  // Format as YYYY-MM-DD in local time
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+function changeWeek(delta) {
+  weekOffset += delta;
+  renderView(activeTab);
+}
+
+function startMove(id) {
+  movingWorkoutId = id;
+  renderView(activeTab);
+}
+
+function cancelMove() {
+  movingWorkoutId = null;
+  renderView(activeTab);
+}
+
+function confirmMove(id, newDate) {
+  workoutsRef.child(id).update({ date: newDate })
+    .then(() => {
+      movingWorkoutId = null;
+      showToast('Workout moved! 📅');
+    })
+    .catch(() => showToast('Error moving workout'));
 }
 
 // ─── SHARED HELPERS ──────────────────────────────────────────
@@ -717,6 +935,8 @@ function deleteWorkout(id) {
 
 function switchTab(tab) {
   activeTab = tab;
+  movingWorkoutId = null;
+  if (tab !== 'week') weekOffset = 0;
   renderView(tab);
 }
 
