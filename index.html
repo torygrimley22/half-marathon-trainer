@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Half Marathon Trainer</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #e85d26;
+      --primary-dark: #c44a18;
+      --secondary: #1a1a2e;
+      --accent: #f5a623;
+      --bg: #f7f5f2;
+      --card: #ffffff;
+      --text: #1a1a2e;
+      --text-muted: #6b7280;
+      --border: #e5e7eb;
+      --coach-color: #7c3aed;
+      --runner-color: #059669;
+      --radius: 12px;
+      --shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ─── NAV ─────────────────────────────────────────────── */
+    nav {
+      background: var(--secondary);
+      color: white;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    nav .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: -0.3px;
+    }
+    nav .logo svg { width: 28px; height: 28px; }
+    nav .mode-badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    nav .mode-badge.coach { background: var(--coach-color); }
+    nav .mode-badge.runner { background: var(--runner-color); }
+    nav .switch-btn {
+      background: rgba(255,255,255,0.15);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 14px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: background 0.2s;
+    }
+    nav .switch-btn:hover { background: rgba(255,255,255,0.25); }
+
+    /* ─── LANDING ─────────────────────────────────────────── */
+    #landing {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: linear-gradient(135deg, var(--secondary) 0%, #2d2d5e 100%);
+    }
+    #landing .hero-icon { font-size: 4rem; margin-bottom: 16px; }
+    #landing h1 {
+      color: white;
+      font-size: 2.2rem;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 8px;
+      letter-spacing: -1px;
+    }
+    #landing p {
+      color: rgba(255,255,255,0.65);
+      margin-bottom: 48px;
+      font-size: 1.05rem;
+    }
+    .role-cards {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 560px;
+      width: 100%;
+    }
+    .role-card {
+      flex: 1;
+      min-width: 200px;
+      background: white;
+      border-radius: var(--radius);
+      padding: 32px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: 3px solid transparent;
+    }
+    .role-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.2); }
+    .role-card.coach-card:hover { border-color: var(--coach-color); }
+    .role-card.runner-card:hover { border-color: var(--runner-color); }
+    .role-card .icon { font-size: 2.8rem; margin-bottom: 12px; }
+    .role-card h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; }
+    .role-card p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
+    .role-card .role-btn {
+      margin-top: 20px;
+      display: inline-block;
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: white;
+    }
+    .coach-card .role-btn { background: var(--coach-color); }
+    .runner-card .role-btn { background: var(--runner-color); }
+
+    /* ─── APP SHELL ───────────────────────────────────────── */
+    #app { display: none; }
+    .container { max-width: 800px; margin: 0 auto; padding: 24px 16px; }
+
+    /* ─── CARDS ───────────────────────────────────────────── */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .card-header h2 { font-size: 1.1rem; font-weight: 700; }
+    .card-header .icon { font-size: 1.3rem; }
+
+    /* ─── FORM ────────────────────────────────────────────── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full-width { grid-column: 1 / -1; }
+    label { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    input, select, textarea {
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      color: var(--text);
+      background: white;
+      transition: border-color 0.2s;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--coach-color);
+    }
+    textarea { resize: vertical; min-height: 80px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+    }
+    .btn:hover { opacity: 0.9; }
+    .btn:active { transform: scale(0.98); }
+    .btn-coach { background: var(--coach-color); color: white; }
+    .btn-runner { background: var(--runner-color); color: white; }
+    .btn-danger { background: #ef4444; color: white; padding: 6px 12px; font-size: 0.8rem; }
+    .btn-sm { padding: 6px 14px; font-size: 0.82rem; }
+    .btn-block { width: 100%; justify-content: center; }
+
+    /* ─── TODAY'S WORKOUT ─────────────────────────────────── */
+    .today-workout {
+      border-left: 4px solid var(--primary);
+      padding-left: 16px;
+    }
+    .today-workout .workout-type {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+    .today-workout h3 { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
+    .today-workout .meta {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .today-workout .meta span {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .today-workout .notes {
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: var(--text);
+    }
+
+    /* ─── WORKOUT LIST ────────────────────────────────────── */
+    .workout-list { display: flex; flex-direction: column; gap: 12px; }
+    .workout-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 14px;
+      background: var(--bg);
+      border-radius: 10px;
+      transition: background 0.2s;
+    }
+    .workout-item:hover { background: #eeecea; }
+    .workout-date-box {
+      min-width: 52px;
+      text-align: center;
+      background: var(--secondary);
+      color: white;
+      border-radius: 8px;
+      padding: 6px 4px;
+    }
+    .workout-date-box .day-num { font-size: 1.3rem; font-weight: 800; line-height: 1; }
+    .workout-date-box .day-mon { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.75; }
+    .workout-info { flex: 1; min-width: 0; }
+    .workout-info .type-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-bottom: 4px;
+    }
+    .workout-info h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 2px; }
+    .workout-info .desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .workout-info .meta-sm { display: flex; gap: 10px; margin-top: 4px; }
+    .workout-info .meta-sm span { font-size: 0.78rem; color: var(--text-muted); }
+    .workout-actions { display: flex; gap: 6px; align-items: flex-start; }
+
+    /* ─── TYPE COLORS ─────────────────────────────────────── */
+    .type-easy { background: #d1fae5; color: #065f46; }
+    .type-tempo { background: #fee2e2; color: #991b1b; }
+    .type-long { background: #dbeafe; color: #1e40af; }
+    .type-intervals { background: #fef3c7; color: #92400e; }
+    .type-rest { background: #f3f4f6; color: #6b7280; }
+    .type-cross { background: #ede9fe; color: #5b21b6; }
+    .type-race { background: #fce7f3; color: #9d174d; }
+
+    /* ─── EMPTY STATE ─────────────────────────────────────── */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+    }
+    .empty-state .empty-icon { font-size: 3rem; margin-bottom: 12px; }
+    .empty-state h3 { font-size: 1rem; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+    .empty-state p { font-size: 0.85rem; }
+
+    /* ─── REST DAY ────────────────────────────────────────── */
+    .rest-day-card {
+      text-align: center;
+      padding: 32px;
+      background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+      border-radius: var(--radius);
+      border: 2px dashed #86efac;
+    }
+    .rest-day-card .icon { font-size: 3rem; margin-bottom: 8px; }
+    .rest-day-card h3 { font-size: 1.2rem; font-weight: 700; color: #15803d; }
+    .rest-day-card p { color: #166534; font-size: 0.9rem; margin-top: 4px; }
+
+    /* ─── STATS ───────────────────────────────────────────── */
+    .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+    .stat-box { background: var(--card); border-radius: var(--radius); padding: 16px; text-align: center; box-shadow: var(--shadow); }
+    .stat-box .val { font-size: 1.5rem; font-weight: 800; color: var(--primary); }
+    .stat-box .lbl { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-top: 2px; }
+
+    /* ─── TOAST ───────────────────────────────────────────── */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: #1a1a2e;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: transform 0.3s ease;
+      z-index: 999;
+      white-space: nowrap;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ─── SECTION TITLE ───────────────────────────────────── */
+    .section-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    /* ─── TABS (runner) ───────────────────────────────────── */
+    .tabs { display: flex; gap: 4px; margin-bottom: 20px; background: var(--border); padding: 4px; border-radius: 10px; }
+    .tab { flex: 1; padding: 8px; text-align: center; border-radius: 7px; cursor: pointer; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); transition: all 0.2s; border: none; background: transparent; }
+    .tab.active { background: white; color: var(--text); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+
+    @media (max-width: 500px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .stats-row { grid-template-columns: repeat(3, 1fr); }
+      .role-cards { flex-direction: column; }
+    }
+  </style>
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════
+     LANDING
+═══════════════════════════════════════════════════════════ -->
+<div id="landing">
+  <div class="hero-icon">🏃</div>
+  <h1>Half Marathon Trainer</h1>
+  <p>Train smart. Run strong. Cross the finish line.</p>
+  <div class="role-cards">
+    <div class="role-card coach-card" onclick="enterView('coach')">
+      <div class="icon">📋</div>
+      <h2>Coach</h2>
+      <p>Create and manage workouts for your runners</p>
+      <div class="role-btn">Coach View</div>
+    </div>
+    <div class="role-card runner-card" onclick="enterView('runner')">
+      <div class="icon">👟</div>
+      <h2>Runner</h2>
+      <p>View today's workout and your training schedule</p>
+      <div class="role-btn">Runner View</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     APP SHELL
+═══════════════════════════════════════════════════════════ -->
+<div id="app">
+  <nav>
+    <div class="logo">
+      <svg viewBox="0 0 28 28" fill="none">
+        <circle cx="14" cy="14" r="14" fill="#e85d26" opacity="0.2"/>
+        <path d="M8 20 L14 8 L20 20" stroke="#e85d26" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="14" cy="6" r="2.5" fill="#e85d26"/>
+      </svg>
+      Half Marathon Trainer
+    </div>
+    <span class="mode-badge" id="modeBadge"></span>
+    <button class="switch-btn" onclick="backToLanding()">Switch Role</button>
+  </nav>
+
+  <div class="container" id="viewContainer"></div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ─── FIREBASE SETUP ──────────────────────────────────────────
+const firebaseConfig = {
+  apiKey: "AIzaSyBcFlhIPJIrPTEYP-Ax93JDNrJfQAyLpSw",
+  authDomain: "grimleyhalfmarathon.firebaseapp.com",
+  databaseURL: "https://grimleyhalfmarathon-default-rtdb.firebaseio.com",
+  projectId: "grimleyhalfmarathon",
+  storageBucket: "grimleyhalfmarathon.firebasestorage.app",
+  messagingSenderId: "73013727718",
+  appId: "1:73013727718:web:b63a4a7369185e18514627"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const workoutsRef = db.ref('workouts');
+
+// ─── STATE ──────────────────────────────────────────────────
+let currentView = null;
+let activeTab = 'today';
+let workouts = [];
+
+// Real-time listener — re-renders whenever Firebase data changes
+workoutsRef.on('value', snapshot => {
+  const data = snapshot.val();
+  workouts = data
+    ? Object.entries(data).map(([id, w]) => ({ id, ...w }))
+    : [];
+  if (currentView) renderView(activeTab);
+});
+
+// ─── NAVIGATION ─────────────────────────────────────────────
+function enterView(view) {
+  currentView = view;
+  activeTab = 'today';
+  document.getElementById('landing').style.display = 'none';
+  const app = document.getElementById('app');
+  app.style.display = 'block';
+
+  const badge = document.getElementById('modeBadge');
+  badge.textContent = view === 'coach' ? '📋 Coach' : '👟 Runner';
+  badge.className = 'mode-badge ' + view;
+
+  renderView();
+}
+
+function backToLanding() {
+  document.getElementById('landing').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  currentView = null;
+}
+
+// ─── COACH VIEW ─────────────────────────────────────────────
+function renderCoach() {
+  const upcoming = workouts.filter(w => w.date >= today()).sort((a,b)=>a.date.localeCompare(b.date));
+  const past = workouts.filter(w => w.date < today()).sort((a,b)=>b.date.localeCompare(a.date));
+
+  const totalMiles = workouts.reduce((s,w) => s + (parseFloat(w.distance)||0), 0);
+
+  return `
+    <div class="stats-row">
+      <div class="stat-box"><div class="val">${workouts.length}</div><div class="lbl">Workouts</div></div>
+      <div class="stat-box"><div class="val">${upcoming.length}</div><div class="lbl">Upcoming</div></div>
+      <div class="stat-box"><div class="val">${totalMiles.toFixed(1)}</div><div class="lbl">Total Miles</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><span class="icon">➕</span><h2>Add Workout</h2></div>
+      <form onsubmit="addWorkout(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Date</label>
+            <input type="date" id="wDate" value="${today()}" required />
+          </div>
+          <div class="form-group">
+            <label>Workout Type</label>
+            <select id="wType" required>
+              <option value="">Select type…</option>
+              <option value="easy">Easy Run</option>
+              <option value="tempo">Tempo Run</option>
+              <option value="long">Long Run</option>
+              <option value="intervals">Intervals</option>
+              <option value="cross">Cross Training</option>
+              <option value="rest">Rest Day</option>
+              <option value="race">Race / Time Trial</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Title</label>
+            <input type="text" id="wTitle" placeholder="e.g. Easy 5-mile recovery" required />
+          </div>
+          <div class="form-group">
+            <label>Distance (miles)</label>
+            <input type="number" id="wDistance" placeholder="0" step="0.1" min="0" />
+          </div>
+          <div class="form-group">
+            <label>Duration (minutes)</label>
+            <input type="number" id="wDuration" placeholder="0" min="0" />
+          </div>
+          <div class="form-group">
+            <label>Target Pace (min/mile)</label>
+            <input type="text" id="wPace" placeholder="e.g. 9:30" />
+          </div>
+          <div class="form-group full-width">
+            <label>Coach Notes</label>
+            <textarea id="wNotes" placeholder="Describe the workout, effort level, key focus points…"></textarea>
+          </div>
+        </div>
+        <div style="margin-top:16px">
+          <button type="submit" class="btn btn-coach">Add Workout</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><span class="icon">📅</span><h2>Upcoming Workouts</h2></div>
+      ${upcoming.length === 0
+        ? `<div class="empty-state"><div class="empty-icon">📭</div><h3>No upcoming workouts</h3><p>Use the form above to schedule your first workout.</p></div>`
+        : `<div class="workout-list">${upcoming.map(workoutItemHTML).join('')}</div>`}
+    </div>
+
+    ${past.length > 0 ? `
+    <div class="card">
+      <div class="card-header"><span class="icon">🗓</span><h2>Past Workouts</h2></div>
+      <div class="workout-list">${past.map(workoutItemHTML).join('')}</div>
+    </div>` : ''}
+  `;
+}
+
+// ─── RUNNER VIEW ─────────────────────────────────────────────
+function renderRunner(tab = 'today') {
+  const todayW = workouts.find(w => w.date === today());
+  const upcoming = workouts.filter(w => w.date > today()).sort((a,b)=>a.date.localeCompare(b.date));
+  const todayHTML = todayW
+    ? todayW.type === 'rest'
+        ? `<div class="rest-day-card"><div class="icon">😴</div><h3>Rest Day</h3><p>${todayW.notes || "Take it easy today — recovery is training too!"}</p></div>`
+        : `<div class="today-workout">
+            <div class="workout-type">${typeLabel(todayW.type)}</div>
+            <h3>${esc(todayW.title)}</h3>
+            <div class="meta">
+              ${todayW.distance ? `<span>📏 ${todayW.distance} miles</span>` : ''}
+              ${todayW.duration ? `<span>⏱ ${todayW.duration} min</span>` : ''}
+              ${todayW.pace ? `<span>🏃 ${esc(todayW.pace)} /mi</span>` : ''}
+            </div>
+            ${todayW.notes ? `<div class="notes">${esc(todayW.notes)}</div>` : ''}
+          </div>`
+    : `<div class="empty-state"><div class="empty-icon">🌅</div><h3>No workout scheduled for today</h3><p>Check back later or ask your coach to add today's session.</p></div>`;
+
+  const schedHTML = upcoming.length === 0
+    ? `<div class="empty-state"><div class="empty-icon">📭</div><h3>No upcoming workouts</h3><p>Your coach hasn't scheduled any upcoming sessions yet.</p></div>`
+    : `<div class="workout-list">${upcoming.map(w => workoutItemHTML(w, false)).join('')}</div>`;
+
+  return `
+    <div class="tabs">
+      <button class="tab ${tab==='today'?'active':''}" onclick="switchTab('today')">Today</button>
+      <button class="tab ${tab==='schedule'?'active':''}" onclick="switchTab('schedule')">Schedule</button>
+    </div>
+
+    <div id="tab-today" style="display:${tab==='today'?'block':'none'}">
+      <p class="section-title">${formatDate(today())}</p>
+      <div class="card" style="padding: 28px;">${todayHTML}</div>
+    </div>
+
+    <div id="tab-schedule" style="display:${tab==='schedule'?'block':'none'}">
+      <p class="section-title">Upcoming Training</p>
+      <div class="card">${schedHTML}</div>
+    </div>
+  `;
+}
+
+// ─── SHARED HELPERS ──────────────────────────────────────────
+function workoutItemHTML(w, showDelete = true) {
+  const d = new Date(w.date + 'T00:00:00');
+  const dayNum = d.getDate();
+  const mon = d.toLocaleString('en-US', { month: 'short' });
+  return `
+    <div class="workout-item" id="item-${w.id}">
+      <div class="workout-date-box">
+        <div class="day-num">${dayNum}</div>
+        <div class="day-mon">${mon}</div>
+      </div>
+      <div class="workout-info">
+        <span class="type-badge type-${w.type}">${typeLabel(w.type)}</span>
+        <h4>${esc(w.title)}</h4>
+        ${w.notes ? `<div class="desc">${esc(w.notes)}</div>` : ''}
+        <div class="meta-sm">
+          ${w.distance ? `<span>📏 ${w.distance}mi</span>` : ''}
+          ${w.duration ? `<span>⏱ ${w.duration}min</span>` : ''}
+          ${w.pace ? `<span>🏃 ${esc(w.pace)}/mi</span>` : ''}
+        </div>
+      </div>
+      ${showDelete ? `<div class="workout-actions"><button class="btn btn-danger btn-sm" onclick="deleteWorkout('${w.id}')">✕</button></div>` : ''}
+    </div>
+  `;
+}
+
+function addWorkout(e) {
+  e.preventDefault();
+  const date = document.getElementById('wDate').value;
+  const type = document.getElementById('wType').value;
+  const title = document.getElementById('wTitle').value.trim();
+  const distance = document.getElementById('wDistance').value;
+  const duration = document.getElementById('wDuration').value;
+  const pace = document.getElementById('wPace').value.trim();
+  const notes = document.getElementById('wNotes').value.trim();
+
+  if (!date || !type || !title) return;
+
+  workoutsRef.push({ date, type, title, distance, duration, pace, notes })
+    .then(() => showToast('Workout added! ✅'))
+    .catch(() => showToast('Error saving workout'));
+}
+
+function deleteWorkout(id) {
+  if (!confirm('Delete this workout?')) return;
+  workoutsRef.child(id).remove()
+    .then(() => showToast('Workout deleted'))
+    .catch(() => showToast('Error deleting workout'));
+}
+
+function switchTab(tab) {
+  activeTab = tab;
+  renderView(tab);
+}
+
+function renderView(tab = 'today') {
+  const container = document.getElementById('viewContainer');
+  if (currentView === 'coach') {
+    container.innerHTML = renderCoach();
+  } else {
+    container.innerHTML = renderRunner(tab);
+  }
+}
+
+// ─── UTILS ───────────────────────────────────────────────────
+function today() {
+  return new Date().toISOString().split('T')[0];
+}
+function formatDate(dateStr) {
+  const d = new Date(dateStr + 'T00:00:00');
+  return d.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+}
+function typeLabel(t) {
+  return { easy:'Easy Run', tempo:'Tempo Run', long:'Long Run', intervals:'Intervals', cross:'Cross Training', rest:'Rest Day', race:'Race' }[t] || t;
+}
+function esc(str) {
+  if (!str) return '';
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>
